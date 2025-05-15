@@ -4,6 +4,7 @@ import pyproj
 import xarray as xr
 from gpm.dataset.crs import set_dataset_crs
 
+
 def get_geodesic_path(
     start_lon: float,
     start_lat: float,
@@ -81,7 +82,6 @@ def get_orbit_dataarray(
     n_range=0,
 ) -> xr.DataArray:
     """Create orbit data array on geodesic band."""
-    
     rng = np.random.default_rng(seed=0)
     data = rng.random((n_cross_track, n_along_track))
     granule_id = np.zeros(n_along_track, dtype=int)
@@ -120,10 +120,8 @@ def get_orbit_dataarray(
         height1d = xr.DataArray(np.arange(n_range)[::-1] * 1000, dims="range")
         height_3d = xr.ones_like(da) * height1d
         da = da.assign_coords({"height": height_3d})
-        
+
     # Add CRS
     crs = pyproj.CRS(proj="longlat", ellps="WGS84")
     da = set_dataset_crs(da, crs=crs)
     return da
-
- 

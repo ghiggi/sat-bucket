@@ -29,7 +29,6 @@ import os
 
 import pandas as pd
 import pytest
-from satbucket.tests.utils.fake_datasets import get_orbit_dataarray
 
 from satbucket import LonLatPartitioning
 from satbucket.info import get_key_from_filepath
@@ -42,6 +41,7 @@ from satbucket.routines import (
     write_bucket,
     write_granules_bucket,
 )
+from satbucket.tests.utils.fake_datasets import get_orbit_dataarray
 
 
 def create_granule_dataframe(df_type="pandas"):
