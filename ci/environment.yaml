@@ -1,0 +1,18 @@
+name: satbucket
+channels: [conda-forge]
+dependencies:
+  - gpm-api
+  - dask
+  - pyyaml
+  - distributed
+  - jupyter
+  - numpy<=1.26.4
+  - polars
+  - pyarrow
+  - pyproj
+  - pytest
+  - pytest-cov
+  - pytest-mock
+  - pytest-sugar
+  - trollsift
+  - xarray>=2025.01.0

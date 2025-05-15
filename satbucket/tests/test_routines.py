@@ -29,8 +29,10 @@ import os
 
 import pandas as pd
 import pytest
+from gpm.tests.utils.fake_datasets import get_orbit_dataarray
 
 from satbucket import LonLatPartitioning
+from satbucket.info import get_key_from_filepath
 from satbucket.readers import read_dask_partitioned_dataset
 from satbucket.routines import (
     check_temporal_partitioning,
@@ -40,8 +42,6 @@ from satbucket.routines import (
     write_bucket,
     write_granules_bucket,
 )
-from satbucket.info import get_key_from_filepath
-from gpm.tests.utils.fake_datasets import get_orbit_dataarray
 
 
 def create_granule_dataframe(df_type="pandas"):
@@ -63,7 +63,7 @@ def granule_to_df_toy_func(filepath):
     df = create_granule_dataframe()
     # Add correct time to simulate filtering of files when updating !
     # filename = "2A.GPM.DPR.V9-20211125.20210705-S013942-E031214.041760.V07A.HDF5"
-    filename_pattern="{product_level:s}.{satellite:s}.{sensor:s}.{algorithm:s}.{start_time:%Y%m%d-S%H%M%S}-E{end_time:%H%M%S}.{granule_id}.{version}.{data_format}" # noqa 
+    filename_pattern = "{product_level:s}.{satellite:s}.{sensor:s}.{algorithm:s}.{start_time:%Y%m%d-S%H%M%S}-E{end_time:%H%M%S}.{granule_id}.{version}.{data_format}"  # noqa
     start_time = get_key_from_filepath(filepath, key="start_time", filename_pattern=filename_pattern)
     df["time"] = start_time
     return df
@@ -285,7 +285,7 @@ def test_merge_granule_buckets(tmp_path):
     ]
 
     # Define filename pattern
-    filename_pattern = "{product_level:s}.{satellite:s}.{sensor:s}.{algorithm:s}.{start_time:%Y%m%d-S%H%M%S}-E{end_time:%H%M%S}.{granule_id}.{version}.{data_format}" # noqa 
+    filename_pattern = "{product_level:s}.{satellite:s}.{sensor:s}.{algorithm:s}.{start_time:%Y%m%d-S%H%M%S}-E{end_time:%H%M%S}.{granule_id}.{version}.{data_format}"  # noqa
 
     # Define spatial partitioning
     spatial_partitioning = LonLatPartitioning(size=(10, 10))
@@ -334,7 +334,7 @@ def test_merge_granule_buckets_update(tmp_path):
         "2A.GPM.DPR.V9-20211125.20210805-S013942-E031214.041760.V07A.HDF5",  # year 2021
     ]
     # Define filename pattern
-    filename_pattern = "{product_level:s}.{satellite:s}.{sensor:s}.{algorithm:s}.{start_time:%Y%m%d-S%H%M%S}-E{end_time:%H%M%S}.{granule_id}.{version}.{data_format}" # noqa 
+    filename_pattern = "{product_level:s}.{satellite:s}.{sensor:s}.{algorithm:s}.{start_time:%Y%m%d-S%H%M%S}-E{end_time:%H%M%S}.{granule_id}.{version}.{data_format}"  # noqa
 
     # Define spatial partitioning
     spatial_partitioning = LonLatPartitioning(size=(10, 10))
