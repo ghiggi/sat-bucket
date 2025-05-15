@@ -29,7 +29,7 @@ import os
 
 import pandas as pd
 import pytest
-from gpm.tests.utils.fake_datasets import get_orbit_dataarray
+from satbucket.tests.utils.fake_datasets import get_orbit_dataarray
 
 from satbucket import LonLatPartitioning
 from satbucket.info import get_key_from_filepath

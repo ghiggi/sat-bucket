@@ -34,7 +34,7 @@ import polars as pl
 import pyarrow as pa
 import pyarrow.parquet as pq
 import pytest
-from gpm.tests.utils.fake_datasets import get_orbit_dataarray
+from satbucket.tests.utils.fake_datasets import get_orbit_dataarray
 
 from satbucket.readers import read_dask_partitioned_dataset
 from satbucket.writers import convert_size_to_bytes, estimate_row_group_size, write_partitioned_dataset
