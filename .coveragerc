@@ -1,0 +1,13 @@
+[run]
+source =
+	satbucket
+omit =
+	*docs*
+	*tutorials*
+	satbucket/_version.py
+
+[report]
+exclude_lines =
+	pragma: no cover
+	def __repr__
+	def __str__
