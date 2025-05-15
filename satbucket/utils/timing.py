@@ -1,9 +1,9 @@
 # -----------------------------------------------------------------------------.
 # MIT License
 
-# Copyright (c) 2024 sat-bucket developers
+# Copyright (c) 2024 GPM-API developers
 #
-# This file is part of sat-bucket.
+# This file is part of GPM-API.
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -24,25 +24,37 @@
 # SOFTWARE.
 
 # -----------------------------------------------------------------------------.
-"""This directory defines the sat-bucket geographic binning toolbox."""
-import contextlib
-from importlib.metadata import PackageNotFoundError, version
+"""This module contains decorators which measure the function time of execuution."""
 
-from satbucket.partitioning import LonLatPartitioning, TilePartitioning, XYPartitioning
-from satbucket.readers import read_bucket as read
-from satbucket.routines import merge_granule_buckets, write_bucket, write_granules_bucket
-
-__all__ = [
-    "LonLatPartitioning",
-    "TilePartitioning",
-    "XYPartitioning",
-    "merge_granule_buckets",
-    "read",
-    "write_bucket",
-    "write_granules_bucket",
-]
+import datetime
+import time
+from time import perf_counter
 
 
-# Get version
-with contextlib.suppress(PackageNotFoundError):
-    __version__ = version("satbucket")
+def print_elapsed_time(fn):
+    def decorator(*args, **kwargs):
+        start_time = time.perf_counter()
+        results = fn(*args, **kwargs)
+        end_time = time.perf_counter()
+        execution_time = end_time - start_time
+        timedelta_str = str(datetime.timedelta(seconds=execution_time))
+        print(f"Elapsed time: {timedelta_str} .", end="\n")
+        return results
+
+    return decorator
+
+
+def print_task_elapsed_time(prefix=" - "):
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            start_time = perf_counter()
+            results = func(*args, **kwargs)
+            end_time = perf_counter()
+            execution_time = end_time - start_time
+            timedelta_str = str(datetime.timedelta(seconds=execution_time))
+            print(f"{prefix} Elapsed time: {timedelta_str} .", end="\n")
+            return results
+
+        return wrapper
+
+    return decorator

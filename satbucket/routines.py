@@ -35,6 +35,9 @@ import pyarrow.dataset
 import pyarrow.parquet as pq
 from tqdm import tqdm
 
+from satbucket.checks import check_start_end_time
+from satbucket.filters import filter_filepaths, is_within_time_period
+from satbucket.info import get_start_end_time_from_filepaths
 from satbucket.io import (
     get_bucket_spatial_partitioning,
     get_bucket_temporal_partitioning,
@@ -42,18 +45,15 @@ from satbucket.io import (
     get_filepaths_within_paths,
     write_bucket_info,
 )
+from satbucket.utils.dask import clean_memory, get_client
+from satbucket.utils.directories import get_first_file, list_and_filter_files
+from satbucket.utils.parallel import compute_list_delayed
+from satbucket.utils.timing import print_task_elapsed_time
 from satbucket.writers import (
     preprocess_writer_kwargs,
     write_dataset_metadata,
     write_partitioned_dataset,
 )
-from satbucket.checks import check_start_end_time
-from satbucket.io.filter import filter_filepaths, is_within_time_period
-from satbucket.io.info import get_start_end_time_from_filepaths
-from satbucket.utils.dask import clean_memory, get_client
-from satbucket.utils.directories import get_first_file, list_and_filter_files
-from satbucket.utils.parallel import compute_list_delayed
-from satbucket.utils.timing import print_task_elapsed_time
 
 ####--------------------------------------------------------------------------------------------------.
 #### Bucket Granules
@@ -759,8 +759,12 @@ def merge_granule_buckets(
         )
         # Filter by time window
         if start_time is not None and end_time is not None:
-            filepaths = filter_filepaths(filepaths, start_time=start_time, end_time=end_time, 
-                                         filename_pattern=filename_pattern)
+            filepaths = filter_filepaths(
+                filepaths,
+                start_time=start_time,
+                end_time=end_time,
+                filename_pattern=filename_pattern,
+            )
 
         # Check file left
         if len(filepaths) == 0:

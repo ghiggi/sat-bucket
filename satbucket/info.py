@@ -25,96 +25,56 @@
 
 # -----------------------------------------------------------------------------.
 """This module implements tools to extract information from file names."""
-import os 
 import datetime
+import os
+
+import numpy as np
 from trollsift import Parser
 
- 
-def parse_filename_pattern(filename, filename_pattern):
-    p = Parser(filename_pattern)
+
+def parse_filename_pattern(filename, pattern):
+    p = Parser(pattern)
     info_dict = p.parse(filename)
-    
-    # Handle start_time
+
+    # Check start_time is available
+    if "start_time" not in info_dict:
+        raise ValueError("Missing start_time information.")
+
+    # Retrieve start_time information
     start_time = info_dict.get("start_time")
-    
-    if isinstance(start_time, datetime.datetime):
-        start_datetime = start_time
-    elif isinstance(start_time, datetime.time):
-        start_date = info_dict.get("start_date")
-        if not isinstance(start_date, datetime.date):
+    if start_time.year == 1900:  # no date provided
+        if "start_date" not in info_dict:
             raise ValueError("start_time is a time object but start_date is missing or invalid.")
-        start_datetime = datetime.datetime.combine(start_date, start_time)
-    else:
-        raise ValueError("Invalid or missing start_time in info_dict.")
+        start_date = info_dict.get("start_date").date()
+        start_time = datetime.datetime.combine(start_date, start_time.time())
 
-    # Handle end_time
-    end_time = info_dict.get("end_time")
+    # If end_time is not available assume start_time + 2h
+    if "end_time" not in info_dict:
+        end_time = start_time + datetime.timedelta(hours=2)
+    else:  # Retrieve end_time information
+        end_time = info_dict.get("end_time")
+        if end_time.year == 1900:  # no date provided
+            if "end_date" in info_dict:
+                end_date = info_dict.get("end_date")
+                end_time = datetime.datetime.combine(end_date.date(), end_time.time())
+            else:  # else use start_time date
+                end_time = datetime.datetime.combine(start_time.date(), end_time.time())
+                if end_time < start_time:
+                    end_time = end_time + datetime.timedelta(days=1)
 
-    if isinstance(end_time, datetime.datetime):
-        end_datetime = end_time
-    elif isinstance(end_time, datetime.time):
-        end_date = info_dict.get("end_date", None)
-        if end_date and isinstance(end_date, datetime.date):
-            end_datetime = datetime.datetime.combine(end_date, end_time)
-        elif isinstance(start_datetime, datetime.datetime):
-            end_datetime = start_datetime.replace(
-                hour=end_time.hour,
-                minute=end_time.minute,
-                second=end_time.second
-            )
-            if end_datetime < start_datetime:
-                end_datetime += datetime.timedelta(days=1)
-        else:
-            raise ValueError("Cannot resolve end_time: missing valid end_date or start_datetime.")
-    else:
-        raise ValueError("Invalid or missing end_time in info_dict.")
-    
     # Update info_dict
-    info_dict["start_time"] = start_datetime
-    info_dict["end_time"] = end_datetime
+    info_dict["start_time"] = start_time
+    info_dict["end_time"] = end_time
 
     # Remove unused fields
     info_dict.pop("start_date", None)
     info_dict.pop("end_date", None)
-    
     return info_dict
-
-# def parse_filename_pattern(filename, pattern):
-#     p = Parser(filename_pattern)
-#     info_dict = p.parse(filename)
-    
-#     pattern = "{start_date:%Y%m%d}-S{start_time:%H%M%S}-E{end_time:%H%M%S}"
-    
-#     # Retrieve correct start_time and end_time
-#     # If start_time does not contain date information, search also for start_date (otherwise raise error)
-#     # Otherwise use start_time
-    
-#     # If end_time does not contain date information, search also for end_date. If end_date not present in info_dict, 
-#     # use start_date and add + 1 day if necessary if end_datetime < start_datetime
-#     # Otherwise use end_time
-    
-   
-    
-#     start_datetime = info_dict["start_date_time"]
-#     end_time = info_dict["end_time"]
-#     end_datetime = start_datetime.replace(
-#         hour=end_time.hour,
-#         minute=end_time.minute,
-#         second=end_time.second,
-#     )
-#     if end_datetime < start_datetime:
-#         end_datetime = end_datetime + datetime.timedelta(days=1)
-#     info_dict.pop("start_date_time")
-#     info_dict["start_time"] = start_datetime
-#     info_dict["end_time"] = end_datetime
- 
-
-#     return info_dict
 
 
 def _get_info_from_filename(filename, filename_patterns):
     """Retrieve file information dictionary from filename."""
-    if isinstance(filename_patterns, str): 
+    if isinstance(filename_patterns, str):
         filename_patterns = [filename_patterns]
     valid_pattern_found = False
     for pattern in filename_patterns:
@@ -124,10 +84,10 @@ def _get_info_from_filename(filename, filename_patterns):
                 valid_pattern_found = True
         except Exception:
             pass
-        if valid_pattern_found: 
+        if valid_pattern_found:
             break
-        
-    if not valid_pattern_found: 
+
+    if not valid_pattern_found:
         return ValueError("Invalid pattern specified.")
     # Return info dictionary
     return info_dict

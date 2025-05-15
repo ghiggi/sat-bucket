@@ -25,16 +25,19 @@
 
 # -----------------------------------------------------------------------------.
 """This module implements tools for dataframe filtering."""
-import re
+import datetime
+
 import numpy as np
 import polars as pl
 import pyproj
 
+from satbucket.checks import check_filepaths, check_start_end_time, get_current_utc_time
 from satbucket.dataframe import (
     df_add_column,
     df_get_column,
     df_select_valid_rows,
 )
+from satbucket.info import get_info_from_filepath
 
 
 def get_geodesic_distance_from_point(lons, lats, lon, lat):
@@ -128,7 +131,6 @@ def is_granule_within_time(start_time, end_time, file_start_time, file_end_time)
     return is_case1 or is_case2 or is_case3
 
 
-
 def _filter_filepath(filepath, filename_pattern, start_time=None, end_time=None):
     """Check if a single filepath pass the filtering parameters.
 
@@ -203,7 +205,7 @@ def filter_filepaths(
     filepaths = check_filepaths(filepaths)
     if len(filepaths) == 0:
         return []
-    
+
     # Check start_time and end_time
     if start_time is not None or end_time is not None:
         if start_time is None:
@@ -211,14 +213,14 @@ def filter_filepaths(
         if end_time is None:
             end_time = get_current_utc_time()  # Current time
         start_time, end_time = check_start_end_time(start_time, end_time)
-    
+
     # Filter filepaths
     filepaths = [
         _filter_filepath(
             filepath,
             start_time=start_time,
             end_time=end_time,
-            filename_pattern,
+            filename_pattern=filename_pattern,
         )
         for filepath in filepaths
     ]

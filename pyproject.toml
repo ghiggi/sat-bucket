@@ -35,7 +35,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Hydrology",
     "Topic :: Scientific/Engineering :: Image Processing",
 ]
-keywords = ["Satellite", "Data", "Monitoring, "Timeseries", "Climatology", "Anomaly Detection"]
+keywords = ["Satellite", "Data", "Monitoring", "Timeseries", "Climatology", "Anomaly Detection"]
 dependencies = [
     "dask",
     "distributed",
@@ -43,15 +43,15 @@ dependencies = [
     "trollsift",
     "numpy",
     "pandas",
-    "polars", 
-    "pyarrow", 
+    "polars",
+    "pyarrow",
     "xarray>=2025.01.0",
     "pyproj",
     "gpm-api",
 ]
 requires-python = ">=3.10"
-version = 0.0.1
-# dynamic = ["version"]
+# version = "0.0.1"
+dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = ["pre-commit", "loghub",

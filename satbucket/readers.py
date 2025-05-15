@@ -31,6 +31,11 @@ import os
 import dask.dataframe as dd
 import pandas as pd
 import polars as pl
+from gpm.utils.geospatial import (
+    get_continent_extent,
+    get_country_extent,
+    get_geographic_extent_around_point,
+)
 
 from satbucket.filters import apply_spatial_filters
 from satbucket.io import (
@@ -38,11 +43,6 @@ from satbucket.io import (
     get_filepaths,
 )
 from satbucket.utils.directories import get_filepaths_within_paths
-from satbucket.utils.geospatial import (
-    get_continent_extent,
-    get_country_extent,
-    get_geographic_extent_around_point,
-)
 
 
 def _get_arrow_to_pandas_defaults():

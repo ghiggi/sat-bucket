@@ -27,6 +27,7 @@
 """This module contains functions to check the sat-bucket arguments."""
 import datetime
 import sys
+
 import numpy as np
 
 
@@ -102,3 +103,12 @@ def check_start_end_time(start_time, end_time):
     if end_time > get_current_utc_time():
         raise ValueError("Provide 'end_time' occurring in the past.")
     return (start_time, end_time)
+
+
+def check_filepaths(filepaths):
+    """Ensure filepaths is a list of string."""
+    if isinstance(filepaths, str):
+        filepaths = [filepaths]
+    if not isinstance(filepaths, list):
+        raise TypeError("Expecting a list of filepaths.")
+    return filepaths

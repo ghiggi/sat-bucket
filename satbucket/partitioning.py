@@ -33,16 +33,6 @@ import pandas as pd
 import polars as pl
 import pyproj.crs
 import xarray as xr
-
-from satbucket.dataframe import (
-    check_valid_dataframe,
-    df_add_column,
-    df_get_column,
-    df_is_column_in,
-    df_select_valid_rows,
-    df_to_pandas,
-    pl_cut,
-)
 from gpm.dataset.crs import set_dataset_crs
 from gpm.utils.geospatial import (
     Extent,
@@ -52,6 +42,16 @@ from gpm.utils.geospatial import (
     get_country_extent,
     get_extent_around_point,
     get_geographic_extent_around_point,
+)
+
+from satbucket.dataframe import (
+    check_valid_dataframe,
+    df_add_column,
+    df_get_column,
+    df_is_column_in,
+    df_select_valid_rows,
+    df_to_pandas,
+    pl_cut,
 )
 
 pd.options.mode.copy_on_write = True
