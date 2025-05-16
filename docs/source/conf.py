@@ -50,7 +50,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.intersphinx",
     "sphinx.ext.coverage",
-    "sphinx.ext.linkcode",
+    # "sphinx.ext.linkcode",
     # "sphinx_design",
     # "sphinx_gallery.gen_gallery",
     # "sphinx.ext.autosectionlabel",
