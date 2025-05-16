@@ -31,17 +31,17 @@ or `conda <https://docs.conda.io/en/latest/>`__ (recommended).
   or `anaconda <https://docs.anaconda.com/anaconda/install/>`__
   if you don't have it already installed.
 
-* Create the *sat-bucket-py311* (or any other custom name) conda environment:
+* Create the *sat-bucket* (or any other custom name) conda environment:
 
 .. code-block:: bash
 
-	conda create --name sat-bucket-py311 python=3.11 --no-default-packages
+	conda create --name sat-bucket python=3.11 --no-default-packages
 
-* Activate the *sat-bucket-py311* conda environment:
+* Activate the *sat-bucket* conda environment:
 
 .. code-block:: bash
 
-	conda activate sat-bucket-py311
+	conda activate sat-bucket
 
 
 **With venv:**
@@ -50,8 +50,8 @@ or `conda <https://docs.conda.io/en/latest/>`__ (recommended).
 
 .. code-block:: bash
 
-   python -m venv sat-bucket-pyXXX
-   cd sat-bucket-pyXXX/Scripts
+   python -m venv sat-bucket
+   cd sat-bucket/Scripts
    activate
 
 
@@ -59,8 +59,8 @@ or `conda <https://docs.conda.io/en/latest/>`__ (recommended).
 
 .. code-block:: bash
 
-   virtualenv -p python3 sat-bucket-pyXXX
-   source sat-bucket-pyXXX/bin/activate
+   virtualenv -p python3 sat-bucket
+   source sat-bucket/bin/activate
 
 .. _installation_standard:
 
@@ -81,19 +81,16 @@ Please install the package in the virtual environment you created before!
 
 .. code-block:: bash
 
-   conda install -c conda-forge sat-bucket
+   conda install -c conda-forge satellite-bucket
 
 .. note::
    In an alternative to conda, if you are looking for a lightweight package manager you could use `micromamba <https://micromamba.readthedocs.io/en/latest/>`__.
 
 **With pip:**
 
-On Linux, prior to the installation of sat-bucket, you can install GEOS using your package manager (e.g. ``apt install libgeos-dev``).
-Then, install sat-bucket with:
-
 .. code-block:: bash
 
-   pip install sat-bucket
+   pip install satellite-bucket
 
 .. _installation_contributor:
 
@@ -134,7 +131,7 @@ Install the package dependencies
 
 .. code-block:: bash
 
-	conda install --only-deps sat-bucket
+	conda install --only-deps satellite-bucket
 
 
 Install the package in editable mode
@@ -188,7 +185,7 @@ The following bash code allow to install all optional dependencies:
 
 .. code-block:: bash
 
-   conda install -c conda-forge jupyter spyder flox numbagg bottleneck opt-einsum python-graphviz ximage pyresample shapely geopandas xvec xoak scikit-learn pyvista trame trame-vuetify trame-vtk polars pyarrow xradar wradlib pyart
+   conda install -c conda-forge jupyter spyder flox numbagg bottleneck opt-einsum python-graphviz bokeh
 
 
 IDE Tools
@@ -214,8 +211,8 @@ To speed up arrays computations with xarray, install
 
    conda install -c conda-forge flox numbagg bottleneck opt-einsum
 
-Dask Operations
-......................
+Visualize Dask Operations
+..........................
 
 To visualize `Dask Task Graphs  <https://docs.dask.org/en/stable/10-minutes-to-dask.html>`_ and monitor
 computations through the `Dask Dashboard <https://docs.dask.org/en/stable/dashboard.html>`_, please install:
@@ -223,70 +220,6 @@ computations through the `Dask Dashboard <https://docs.dask.org/en/stable/dashbo
 .. code-block:: bash
 
    conda install -c conda-forge python-graphviz bokeh
-
-Image Analysis
-....................
-
-To perform advanced image/volume manipulations, install `ximage <https://x-image.readthedocs.io/en/latest/index.html>`_:
-
-.. code-block:: bash
-
-   conda install -c conda-forge ximage
-
-Geospatial Manipulation
-.............................
-
-To perform advanced geospatial manipulations, we recommend to install
-`shapely <https://shapely.readthedocs.io/en/stable/manual.html>`_,
-`geopandas  <https://geopandas.org/en/stable/>`_,
-`xvec <https://xvec.readthedocs.io/en/stable/>`_ and
-`pyresample <https://pyresample.readthedocs.io/en/latest/>`_:
-
-.. code-block:: bash
-
-   conda install -c conda-forge shapely geopandas xvec pyresample
-
-Cross-Section and Trajectories
-.................................
-
-To be able to extract radar cross-sections with sat-bucket, install:
-
-.. code-block:: bash
-
-   conda install -c conda-forge xoak scikit-learn
-
-3D Radar Visualization
-...........................
-
-To create interactive 3D radar visualization with sat-bucket, please install
-`pyvista  <https://docs.pyvista.org/>`_ and the associated dependencies:
-
-.. code-block:: bash
-
-      ``conda install -c conda-forge pyvista trame trame-vuetify trame-vtk``
-
-Geographic Bucket Archives
-............................
-
-To create and analyse efficiently Satellite satellite bucket archives with sat-bucket, install
-`polars <https://pola.rs/>`_ and
-`pyarrow <https://arrow.apache.org/docs/python/index.html>`_:
-
-.. code-block:: bash
-
-      conda install -c conda-forge polars pyarrow
-
-Spaceborne/Ground Radar Analysis
-...................................
-
-To perform spaceborne-ground radar calibration and validation, install
-`xradar <https://docs.openradarscience.org/projects/xradar/en/stable/>`_,
-`wradlib <https://docs.wradlib.org/en/latest/>`_ and
-`pyart <https://arm-doe.github.io/pyart/>`_:
-
-.. code-block:: bash
-
-   conda install -c conda-forge xradar wradlib arm_pyart
 
 
 Run sat-bucket on Jupyter Notebooks

@@ -48,7 +48,7 @@ sat-bucket can be installed via [conda][conda_link] on Linux, Mac, and Windows.
 Install the package by typing the following command in the terminal:
 
 ```bash
-conda install sat-bucket
+conda install satellite-bucket
 ```
 
 In case conda-forge is not set up for your system yet, see the easy to follow instructions on [conda-forge][conda_forge_link].
@@ -63,7 +63,7 @@ If you can't solve the problems and install cartopy with pip, you should install
 Then, install the sat-bucket package by typing the following command in the terminal:
 
 ```bash
-pip install sat-bucket
+pip install satellite-bucket
 ```
 
 To install the latest development version via pip, see the [documentation][dev_install_link].
