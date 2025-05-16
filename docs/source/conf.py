@@ -29,20 +29,15 @@ author = "Gionata Ghiggi"
 
 
 # -- Copy Jupyter Notebook Tutorials------------------------------------------
-root_path = os.path.dirname(os.path.dirname(os.getcwd()))
-filenames = [
-    "tutorial_02_IMERG.ipynb",
-    "tutorial_02_PMW_1C.ipynb",
-    "tutorial_02_PMW_2A.ipynb",
-    "tutorial_02_RADAR_2A.ipynb",
-    "tutorial_03_SR_GR_Matching.ipynb",
-    "tutorial_03_SR_GR_Calibration.ipynb",
-    "tutorial_TCPRIMED.ipynb",
-]
-for filename in filenames:
-    in_path = os.path.join(root_path, "tutorials", filename)
-    out_path = os.path.join(os.getcwd(), "tutorials", filename)
-    shutil.copyfile(in_path, out_path)
+# root_path = os.path.dirname(os.path.dirname(os.getcwd()))
+# filenames = [
+#     "tutorial_02_IMERG.ipynb",
+
+# ]
+# for filename in filenames:
+#     in_path = os.path.join(root_path, "tutorials", filename)
+#     out_path = os.path.join(os.getcwd(), "tutorials", filename)
+#     shutil.copyfile(in_path, out_path)
 
 
 # -- General configuration ---------------------------------------------------
@@ -76,9 +71,7 @@ intersphinx_mapping = {
     "pandas": ("https://pandas.pydata.org/docs/", None),
     "pyproj": ("https://pyproj4.github.io/pyproj/stable/", None),
     "python": ("https://docs.python.org/3/", None),
-    "scipy": ("https://docs.scipy.org/doc/scipy/", None),
     "xarray": ("https://docs.xarray.dev/en/stable/", None),
-    "pyvista": ("https://docs.pyvista.org/version/stable/", None),
     "pyresample": ("https://pyresample.readthedocs.io/en/stable/", None),
     "dask": ("https://docs.dask.org/en/stable/", None),
     "shapely": ("https://shapely.readthedocs.io/en/stable/", None),
