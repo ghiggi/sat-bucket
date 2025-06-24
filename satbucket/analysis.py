@@ -26,6 +26,7 @@
 # -----------------------------------------------------------------------------.
 """This module contains functions to analysis bucket archives."""
 import datetime
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -33,6 +34,8 @@ import polars as pl
 import pyproj
 from gpm.dataset.crs import set_dataset_crs
 from gpm.utils.xarray import xr_drop_constant_dimension, xr_first
+
+from satbucket.checks import check_time
 
 
 def get_list_overpass_time(timesteps, interval=None):
@@ -107,7 +110,7 @@ def split_by_overpass(df, interval=None, max_overpass=np.inf):
     return list_df
 
 
-def get_swath_indices(df):
+def get_swath_indices(df, x_index, y_index):
     """Retrieve orbit dimension indices.
 
     Assumes only two granule id might be present.
@@ -115,8 +118,24 @@ def get_swath_indices(df):
     first granule is the real maximum.
 
     """
+    # If there are no hyphens in x_index, treat the column as already integer indices
+    if not df[x_index].astype(str).str.contains("-").any():
+        warnings.warn(
+            f"x_index column '{x_index}' not in expected format 'granule_id-along_track_id'. "
+            "Results may be inaccurate where granule starts and stops.",
+            UserWarning,
+            stacklevel=2,
+        )
+        # TODO: we could exploit time information to identify restart of x_index
+        x_values = df[x_index].astype(int).to_numpy()
+        x_indices = np.unique(x_values)
+        y_values = df[y_index]
+        y_min, y_max = y_values.min(), y_values.max()
+        y_indices = np.arange(y_min, y_max + 1)
+        return (x_indices, x_values), (y_indices, y_values)
+
     # Split satbucket_id into granule_id and along_track_id (make sure they are integers)
-    df_along = df["satbucket_id"].str.split("-", expand=True).astype(int)
+    df_along = df[x_index].str.split("-", expand=True).astype(int)
     df_along.columns = ["granule_id", "along_track_id"]
 
     # We will assign new x indices so that each granule's along-track block is contiguous.
@@ -152,18 +171,18 @@ def get_swath_indices(df):
         offset += n_tracks
 
     # The complete set of x indices is just all integers from 0 to offset-1.
-    x_index = np.arange(offset)
+    x_indices = np.arange(offset)
 
     # Retrieve y_index and y_values from cross-track IDs
-    y_min = df["satbucket_cross_track_id"].min()
-    y_max = df["satbucket_cross_track_id"].max()
-    y_index = np.arange(y_min, y_max + 1)
-    y_values = df["satbucket_cross_track_id"]
+    y_min = df[y_index].min()
+    y_max = df[y_index].max()
+    y_indices = np.arange(y_min, y_max + 1)
+    y_values = df[y_index]
 
-    return (x_index, x_values), (y_index, y_values)
+    return (x_indices, x_values), (y_indices, y_values)
 
 
-def overpass_to_dataset(df_overpass):
+def overpass_to_dataset(df_overpass, x_dim, y_dim, x_index, y_index):
     """Reshape an overpass dataframe to a xarray.Dataset.
 
     The resulting dataset will have missing geolocation for footprints
@@ -173,15 +192,25 @@ def overpass_to_dataset(df_overpass):
         df_overpass = df_overpass.to_pandas()
 
     # Retrieve dimension indices
-    (x_index, x_values), (y_index, y_values) = get_swath_indices(df_overpass)
+    (x_indices, x_values), (y_indices, y_values) = get_swath_indices(df_overpass, x_index=x_index, y_index=y_index)
     df_overpass["x_index"] = x_values
     df_overpass["y_index"] = y_values
 
     # Set index
     df_overpass = df_overpass.set_index(["x_index", "y_index"])
 
+    # Remove duplicates
+    idx_duplicated = df_overpass.index.duplicated()
+    if idx_duplicated.any():
+        warnings.warn(
+            "There are some duplicated index. This should not occur.",
+            UserWarning,
+            stacklevel=2,
+        )
+    df_overpass = df_overpass[~idx_duplicated]
+
     # Create MultiIndex with all possible combinations
-    full_index = pd.MultiIndex.from_product([x_index, y_index], names=["x_index", "y_index"])
+    full_index = pd.MultiIndex.from_product([x_indices, y_indices], names=["x_index", "y_index"])
 
     # Reindex to include all interval combinations
     # --> Add nan to rows with inexisitng index combo
@@ -189,13 +218,23 @@ def overpass_to_dataset(df_overpass):
 
     # Convert to dataset
     ds_swath = df_swath.to_xarray()
-    ds_swath = ds_swath.rename_dims({"x_index": "along_track", "y_index": "cross_track"})
-    ds_swath["time"] = xr_first(ds_swath["time"], dim="cross_track")
-    ds_swath["satbucket_id"] = xr_first(ds_swath["satbucket_id"], dim="cross_track")
-    ds_swath["satbucket_cross_track_id"] = xr_first(ds_swath["satbucket_cross_track_id"], dim="along_track")
+    # Case when dim name equal to index name
+    if x_index == x_dim:
+        ds_swath = ds_swath.drop_vars(x_dim)
+    if y_index == y_dim:
+        ds_swath = ds_swath.drop_vars(y_dim)
+    # Remae dataset
+    ds_swath = ds_swath.rename_dims({"x_index": x_dim, "y_index": y_dim})
+    # Ensure time is 1D
+    ds_swath["time"] = xr_first(ds_swath["time"], dim=y_dim)
+    # Case when dim name not equal to index name
+    if x_index in ds_swath:
+        ds_swath[x_index] = xr_first(ds_swath[x_index], dim=y_dim)
+    if y_index in ds_swath:
+        ds_swath[y_index] = xr_first(ds_swath[y_index], dim=x_dim)
 
     # Define set coordinates
-    candidate_coords = ["lon", "lat", "time", "satbucket_id", "satbucket_along_track_id", "satbucket_cross_track_id"]
+    candidate_coords = ["lon", "lat", "time", x_index, y_index]
     available_coords = [coord for coord in candidate_coords if coord in ds_swath]
 
     # Drop dimension for coordinates  that are all equals along a dimension
@@ -209,7 +248,7 @@ def overpass_to_dataset(df_overpass):
     ds_swath = ds_swath.drop_vars(["x_index", "y_index"])
 
     # Reorder dimensions
-    ds_swath = ds_swath.transpose("cross_track", "along_track", ...)
+    ds_swath = ds_swath.transpose(y_dim, x_dim, ...)
 
     # Add CRS
     ds_swath = set_dataset_crs(ds_swath, crs=pyproj.CRS.from_epsg(4326))
@@ -250,8 +289,6 @@ def count_overpass_occurence(df, interval=None, time="time"):
 
 
 def ensure_start_end_time_interval(start_time, end_time, interval=None):
-    from satbucket.checks import check_time
-
     # Convert np.datetime64 to datetime if needed
     start_time = check_time(start_time)
     end_time = check_time(end_time)
