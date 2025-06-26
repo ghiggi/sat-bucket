@@ -16,7 +16,7 @@ from satbucket import LonLatPartitioning, write_granules_bucket
 dask.config.set({"distributed.worker.multiprocessing-method": "forkserver"})
 dask.config.set({"distributed.worker.use-file-locking": "False"})
 
-from dask.distributed import Client, LocalCluster # noqa
+from dask.distributed import Client, LocalCluster  # noqa
 
 if __name__ == "__main__":  #  https://github.com/dask/distributed/issues/2520
     ####----------------------------------------------------------------------.

@@ -7,11 +7,10 @@ bucket_dir = "/home/ghiggi/data/GPM_GMI_Bucket"
 df = satbucket.read(
     bucket_dir=bucket_dir,
     use_pyarrow=False,  # use rust parquet reader
-    point=(-12, 40), # (lon, lat)
+    point=(-12, 40),  # (lon, lat)
     distance=10_000,  # meters
-    parallel="auto", # "row_groups", "columns"
-    backend="pandas" # "pandas"  
+    parallel="auto",  # "row_groups", "columns"
+    backend="pandas",  # "pandas"
 )
 
 print(df)
-
