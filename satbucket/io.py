@@ -25,6 +25,7 @@
 
 # -----------------------------------------------------------------------------.
 """This module provide utilities to search Satellite Geographic Buckets files."""
+
 import importlib
 import os
 

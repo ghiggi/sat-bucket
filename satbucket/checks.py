@@ -25,6 +25,7 @@
 
 # -----------------------------------------------------------------------------.
 """This module contains functions to check the sat-bucket arguments."""
+
 import datetime
 import sys
 

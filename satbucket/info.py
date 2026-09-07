@@ -25,6 +25,7 @@
 
 # -----------------------------------------------------------------------------.
 """This module implements tools to extract information from file names."""
+
 import datetime
 import os
 
