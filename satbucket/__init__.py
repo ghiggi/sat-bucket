@@ -25,6 +25,7 @@
 
 # -----------------------------------------------------------------------------.
 """This directory defines the sat-bucket geographic binning toolbox."""
+
 import contextlib
 from importlib.metadata import PackageNotFoundError, version
 
