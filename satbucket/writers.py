@@ -25,6 +25,7 @@
 
 # -----------------------------------------------------------------------------.
 """This module provide to write a Satellite Geographic Bucket Apache Parquet Dataset."""
+
 import math
 import os
 
