@@ -25,6 +25,7 @@
 
 # -----------------------------------------------------------------------------.
 """This module provides the routines for the creation of Satellite Geographic Buckets."""
+
 import os
 
 import dask
