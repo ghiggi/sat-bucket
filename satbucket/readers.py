@@ -25,6 +25,7 @@
 
 # -----------------------------------------------------------------------------.
 """This module provide utilities to read Satellite Geographic Buckets Apache Parquet files."""
+
 import inspect
 import os
 
