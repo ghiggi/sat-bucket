@@ -25,6 +25,7 @@
 
 # -----------------------------------------------------------------------------.
 """This module implements tools for dataframe filtering."""
+
 import datetime
 
 import numpy as np
